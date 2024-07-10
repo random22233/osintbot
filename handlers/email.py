@@ -313,10 +313,15 @@ async def command_search_handler(message: Message) -> None:
     else:
         await message.answer(seon)
 
-    # #woxy
+    #woxy
     r = requests.get(f'https://api.whoxy.com/?key=6f74300ecd4db96ct5a7d9148ca47c13f&reverse=whois&email={email}').text
+    woxy = r
 
-    await message.answer(r)
+    if len(woxy) > 4096:
+        for x in range(0, len(woxy), 4096):
+            await message.answer(woxy[x:x+4096])
+    else:
+        await message.answer(woxy)
 
     #ghunt
 
