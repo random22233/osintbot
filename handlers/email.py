@@ -2,6 +2,7 @@ from aiogram import F
 from aiogram import Router
 import requests
 from aiogram.types import Message
+import urllib.parse
 
 from urllib.parse import quote
 
@@ -60,6 +61,20 @@ def search_in_csv(file_path, column_name, search_value):
                 result = row
                 break
     return result
+
+
+import sys
+import httpx
+
+from ghunt.helpers.gmail import is_email_registered
+
+
+async def ghunt(email, message):
+    as_client = httpx.AsyncClient()
+    is_registered = await is_email_registered(as_client, str(email))
+    if is_registered:
+        return await message.answer("Registered on Google : True")
+    return await message.answer("Registered on Google : False")
 
 
 
@@ -226,91 +241,89 @@ async def command_search_handler(message: Message) -> None:
     #     await message.answer(f"Linkedint:\n\nName: {fname} {lname}\nProfile picture: {photourl}")
 
     #files
-    email_to_search = email
-    filename = "data/text/@furyurl28042.txt"
-    search_result = search_email_in_file(email_to_search, filename)
-    if search_result:
-        await message.answer(f'File Result 1: {search_result.strip()}')
-    filename = "data/text/@furyurl28043.txt"
-    search_result = search_email_in_file(email_to_search, filename)
-    if search_result:
-        await message.answer(f'File Result 2: {search_result.strip()}')
-    filename = "data/text/discordUser2023_1.txt"
-    search_result = search_email_in_file(email_to_search, filename)
-    if search_result:
-        with open(filename) as f:
-            first_line = f.readline().strip('\n')
-        await message.answer(f'Discord Result 3:\n\n{first_line}\n\n{search_result.strip()}')
-    filename = "data/text/discordUser2023_2.txt"
-    search_result = search_email_in_file(email_to_search, filename)
-    if search_result:
-        with open(filename) as f:
-            first_line = f.readline().strip('\n')
-        await message.answer(f'Discord Result 4:\n\n{first_line}\n\n{search_result.strip()}')
+    # email_to_search = email
+    # filename = "data/text/@furyurl28042.txt"
+    # search_result = search_email_in_file(email_to_search, filename)
+    # if search_result:
+    #     await message.answer(f'File Result 1: {search_result.strip()}')
+    # filename = "data/text/@furyurl28043.txt"
+    # search_result = search_email_in_file(email_to_search, filename)
+    # if search_result:
+    #     await message.answer(f'File Result 2: {search_result.strip()}')
+    # filename = "data/text/discordUser2023_1.txt"
+    # search_result = search_email_in_file(email_to_search, filename)
+    # if search_result:
+    #     with open(filename) as f:
+    #         first_line = f.readline().strip('\n')
+    #     await message.answer(f'Discord Result 3:\n\n{first_line}\n\n{search_result.strip()}')
+    # filename = "data/text/discordUser2023_2.txt"
+    # search_result = search_email_in_file(email_to_search, filename)
+    # if search_result:
+    #     with open(filename) as f:
+    #         first_line = f.readline().strip('\n')
+    #     await message.answer(f'Discord Result 4:\n\n{first_line}\n\n{search_result.strip()}')
     
-    csv_file_path = 'data/csv/disc.csv'
-    search_column = 'email'
+    # csv_file_path = 'data/csv/disc.csv'
+    # search_column = 'email'
 
-    matching_rows = search_in_csv(csv_file_path, search_column, email)
-    if matching_rows:
-        await message.answer(f'Discord Result 5:\n\nUsername: {matching_rows}')
+    # matching_rows = search_in_csv(csv_file_path, search_column, email)
+    # if matching_rows:
+    #     await message.answer(f'Discord Result 5:\n\nUsername: {matching_rows}')
 
-    sql_file_path = 'data/sql/opensc.ws.sql'
+    # sql_file_path = 'data/sql/opensc.ws.sql'
 
-    matching_lines = search_in_sql_file(sql_file_path, email)
-    if matching_lines:
-        message.answer(f"SQL DB 1'{email}':")
+    # matching_lines = search_in_sql_file(sql_file_path, email)
+    # if matching_lines:
+    #     message.answer(f"SQL DB 1'{email}':")
 
-        for line in matching_lines:
-            await message.answer(line)
+    #     for line in matching_lines:
+    #         await message.answer(line)
 
-    sql_file_path = 'data/sql/xakepok_xakepok.sql'
+    # sql_file_path = 'data/sql/xakepok_xakepok.sql'
 
-    matching_lines = search_in_sql_file(sql_file_path, email)
-    if matching_lines:
-        message.answer(f"SQL DB 2'{email}':")
+    # matching_lines = search_in_sql_file(sql_file_path, email)
+    # if matching_lines:
+    #     message.answer(f"SQL DB 2'{email}':")
 
-        for line in matching_lines:
-            await message.answer(line)
+    #     for line in matching_lines:
+    #         await message.answer(line)
 
-    sql_file_path = 'data/sql/d.sql'
+    # sql_file_path = 'data/sql/d.sql'
 
-    matching_lines = search_in_sql_file(sql_file_path, email)
-    if matching_lines:
-        message.answer(f"SQL DB 3'{email}':")
+    # matching_lines = search_in_sql_file(sql_file_path, email)
+    # if matching_lines:
+    #     message.answer(f"SQL DB 3'{email}':")
 
-        for line in matching_lines:
-            await message.answer(line)
+    #     for line in matching_lines:
+    #         await message.answer(line)
+
+    #seon
     
     headers = {
-        "X-API-KEY": "[license_key]"
+        "X-API-KEY": "f06cfbbb-4d96-4ce4-87eb-dba1479eaeff"
     }
 
-    r = requests.get("https://api.seon.io/SeonRestService/email-api/v2/[email_address]", headers=headers)
+    r = requests.get(f"https://api.us-east-1-main.seon.io/SeonRestService/email-api/v2/{email}", headers=headers)
+    seon = r.text
 
-    await message.answer(r.text)
+    # await message.answer()
+    if len(seon) > 4096:
+        for x in range(0, len(seon), 4096):
+            await message.answer(seon[x:x+4096])
+    else:
+        await message.answer(seon)
+
+    # #woxy
+    r = requests.get(f'https://api.whoxy.com/?key=6f74300ecd4db96ct5a7d9148ca47c13f&reverse=whois&email={email}').text
+
+    await message.answer(r)
 
     #ghunt
 
-    import sys
-    import httpx
+    
 
-    from ghunt.helpers.gmail import is_email_registered
-
-
-    async def main():
-        if not sys.argv[1:]:
-            exit("Please give an email address.")
-
-        as_client = httpx.AsyncClient() # Async Client
-
-        email = sys.argv[1]
-        is_registered = await is_email_registered(as_client, email)
-
-        print("Registered on Google :", is_registered)
-        await message.answer("Registered on Google :", is_registered)
-
-    asyncio.run(main()) # running our async code in a non-async code
+    # asyncio.run(ghunt())
+    asyncio.create_task(ghunt(email, message))
 
     #avtar api
     # url = "https://avatarapi.com/v2/api.aspx"
