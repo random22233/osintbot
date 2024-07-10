@@ -281,6 +281,36 @@ async def command_search_handler(message: Message) -> None:
 
         for line in matching_lines:
             await message.answer(line)
+    
+    headers = {
+        "X-API-KEY": "[license_key]"
+    }
+
+    r = requests.get("https://api.seon.io/SeonRestService/email-api/v2/[email_address]", headers=headers)
+
+    await message.answer(r.text)
+
+    #ghunt
+
+    import sys
+    import httpx
+
+    from ghunt.helpers.gmail import is_email_registered
+
+
+    async def main():
+        if not sys.argv[1:]:
+            exit("Please give an email address.")
+
+        as_client = httpx.AsyncClient() # Async Client
+
+        email = sys.argv[1]
+        is_registered = await is_email_registered(as_client, email)
+
+        print("Registered on Google :", is_registered)
+        await message.answer("Registered on Google :", is_registered)
+
+    asyncio.run(main()) # running our async code in a non-async code
 
     #avtar api
     # url = "https://avatarapi.com/v2/api.aspx"
