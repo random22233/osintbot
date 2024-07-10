@@ -69,3 +69,10 @@ async def command_search_handler(message: Message) -> None:
     response = requests.post(url, json=payload, headers=headers)
 
     print(response.text)
+
+    #seon
+    headers = {
+        "X-API-KEY": "[license_key]"
+    }
+
+    r = requests.get("https://api.seon.io/SeonRestService/phone-api/v1/[phone_number]", headers=headers)
