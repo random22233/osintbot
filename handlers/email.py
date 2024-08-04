@@ -29,6 +29,7 @@ WOXY_API_KEY = os.getenv('WOXY_API_KEY')
 AVATAR_API_USER = os.getenv('AVATAR_API_USER')
 AVATAR_API_PASS = os.getenv('AVATAR_API_PASS')
 WOXY_API_KEY = os.getenv('WOXY_API_KEY')
+SEON_API_KEY = os.getenv('SEON_API_KEY')
 
 REVERSE_CONTACT_API_KEY = os.getenv('REVERSE_CONTACT_API_KEY')
 
@@ -75,6 +76,44 @@ async def ghunt(email, message):
     if is_registered:
         return await message.answer("Registered on Google : True")
     return await message.answer("Registered on Google : False")
+
+
+
+# async def search0t(email, message):
+#     client_options = ClientOptions(api_key=CAPMONSTER_API_KEY)
+#     cap_monster_client = CapMonsterClient(options=client_options)
+#     recaptcha2request = HcaptchaProxylessRequest(websiteUrl="https://search.0t.rocks/",
+#                                                         websiteKey="bb0d021f-a411-4d21-91fd-797aff5f1d58")
+#     responses =  await cap_monster_client.solve_captcha(recaptcha2request)
+    
+#     cap = responses['gRecaptchaResponse']
+
+
+#     options = webdriver.ChromeOptions()
+#     async with webdriver.Chrome(options=options) as driver:
+#         await driver.get(f"https://search.0t.rocks/records?emails={email}&token={cap}")
+#         await driver.sleep(6)
+#         await driver.find_element(By.XPATH, '/html/body', timeout=10)
+#         txt = await driver.page_source
+#         soup = BeautifulSoup(txt, 'html.parser')
+#         dd_elements = soup.find_all('dd')
+#         mainres = ''
+#         for dd in dd_elements:
+#             mainres += dd.get_text(strip=True)
+#         if len(mainres) > 4096:
+#             for x in range(0, len(mainres), 4096):
+#                 await message.answer(mainres[x:x+4096])
+#         else:
+#             await message.answer(mainres)
+        # elem = await driver.find_element(By.XPATH, '/html/body/div[1]', timeout=10)
+        # # time.sleep(5)
+        
+        # txt = await elem.text
+        # res = re.sub(r'.+Visualize.', '', txt)
+        # mainres = res.replace('  ', '')
+        # # return f'0t:{mainres.strip()}'
+        # await message.answer(f'0t:{mainres.strip()}')
+
 
 async def holehe(email, message):
     command_output = f'holehe {email} --only-used --no-color'
@@ -262,7 +301,7 @@ async def command_search_handler(message: Message) -> None:
     #seon
     
     headers = {
-        "X-API-KEY": "f06cfbbb-4d96-4ce4-87eb-dba1479eaeff"
+        "X-API-KEY": SEON_API_KEY
     }
 
     r = requests.get(f"https://api.us-east-1-main.seon.io/SeonRestService/email-api/v2/{email}", headers=headers)
