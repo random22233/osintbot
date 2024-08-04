@@ -23,6 +23,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 LEAKOSINT_TOKEN = os.getenv('LEAKOSINT_TOKEN')
+SEON_API_KEY = os.getenv('SEON_API_KEY')
+PHONE_VALIDATOR_API_KEY = os.getenv('SEON_API_KEY')
 
 phone_router = Router()
 
@@ -71,8 +73,15 @@ async def command_search_handler(message: Message) -> None:
     print(response.text)
 
     #seon
-    headers = {
-        "X-API-KEY": "[license_key]"
+    headers = {                 
+        "X-API-KEY": SEON_API_KEY
     }
 
-    r = requests.get("https://api.seon.io/SeonRestService/phone-api/v1/[phone_number]", headers=headers)
+    r = requests.get(f"https://api.seon.io/SeonRestService/phone-api/v1/{phone}", headers=headers)
+    await message.answer(r)
+
+
+    #phone
+
+    ph = requests.get(f'https://api.phonevalidator.com/api/v3/phonesearch?apikey={PHONE_VALIDATOR_API_KEY}&phone={phone}&type=fake,basic').json()
+    await message.answer(ph)
