@@ -20,7 +20,7 @@ load_dotenv()
 
 TOKEN = os.getenv('BOT_TOKEN')
 
-bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
+# bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 
 photo_router = Router()
 

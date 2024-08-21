@@ -1,25 +1,24 @@
-from aiogram import F
-from aiogram import Router
+from datetime import datetime
 import requests
-from aiogram.types import Message
-import urllib.parse
-
-from urllib.parse import quote
-
-
 import subprocess
-from aiogram import Router
-
-
-from selenium_driverless import webdriver
-from selenium_driverless.types.by import By
-import asyncio
-from capmonstercloudclient import CapMonsterClient, ClientOptions
-from capmonstercloudclient.requests import HcaptchaProxylessRequest
-from bs4 import BeautifulSoup
 import csv
 import os
+from aiogram import F
+from aiogram.types import Message , FSInputFile
+from utils.db_search import search_carderpro, search_inattack_part1 , search_inattack_part2, search_inattack_user, search_opensc_ws, search_xakepok, search_zloy_db
+from utils.ghunt_email.ghunt import ghunt as run_ghunt
+
+from aiogram import Router
+
+
+# from selenium_driverless import webdriver
+# from selenium_driverless.types.by import By
+# from capmonstercloudclient import CapMonsterClient, ClientOptions
+# from capmonstercloudclient.requests import HcaptchaProxylessRequest
 from dotenv import load_dotenv
+
+from utils.get_reviews_screenshot import get_reviews_screenshot
+from utils.onion_serch import scrape_onion
 
 load_dotenv()
 
@@ -63,19 +62,99 @@ def search_in_csv(file_path, column_name, search_value):
                 break
     return result
 
+async def send_text_file(message: Message, file_content, file_path, file_name):
+    """Sends an in-memory text file to a Telegram chat."""
+    with open(file_path , "w") as f:
+        f.write(file_content)
+    document = FSInputFile(file_path, filename=file_name)
+    await message.answer_document(document=document)
+    os.remove(file_path)
 
-import sys
-import httpx
 
-from ghunt.helpers.gmail import is_email_registered
+async def search_db(email , message: Message):
+    await message.answer(f"searching in local databases")
+    try:
+        data = search_zloy_db(email)
+        await message.answer(data)
+    except Exception as e:
+        print("error in search_zloy_db", e)
+    try:
+        user_data, messages = search_inattack_part1(email)
+        await message.answer(user_data)
+        if messages and len(messages) > 0:
+            now = str(datetime.now()).replace(":", "_").replace(" ", "_").replace("-", "_").replace(".", "_")
+            current_directory = os.getcwd()
+            messages_filename = f"messages_{message.message_id}_{now}.txt"
+            messages_path = os.path.join(current_directory, messages_filename)
+            
+            await  send_text_file(message, messages, messages_path, messages_filename)
+    except Exception as e:
+        print("error in search_inattack_part1", e)
+    try:
+        user_data, messages = search_inattack_part2(email)
+        await message.answer(user_data)
+        if messages and len(messages) > 0:
+            now = str(datetime.now()).replace(":", "_").replace(" ", "_").replace("-", "_").replace(".", "_")
+            current_directory = os.getcwd()
+            messages_filename = f"posts_{message.message_id}_{now}.txt"
+            messages_path = os.path.join(current_directory, messages_filename)
+            
+            await  send_text_file(message, messages, messages_path, messages_filename)
+    except Exception as e:
+        print("error in search_inattack_part2", e)
+    try:
+        user_data, messages = search_xakepok(email)
+        await message.answer(user_data)
+        if messages and len(messages) > 0:
+            now = str(datetime.now()).replace(":", "_").replace(" ", "_").replace("-", "_").replace(".", "_")
+            current_directory = os.getcwd()
+            messages_filename = f"posts_{message.message_id}_{now}.txt"
+            messages_path = os.path.join(current_directory, messages_filename)
+            
+            await  send_text_file(message, messages, messages_path, messages_filename)
+    except Exception as e:
+        print("error in search_inattack_part2", e)
+    try:
+        data = search_carderpro(email)
+        await message.answer(data)
+    except Exception as e:
+        print("error in search_carderpro", e)
+    try:
+        data = search_opensc_ws(email)
+        await message.answer(data)
+    except Exception as e:
+        print("error in search_opensc_ws", e)
+       
+    try:
+        data = search_inattack_user(email)
+        await message.answer(data)
+    except Exception as e:
+        print("error in search_inattack_user", e) 
+    # print("method_1_result" , method_1_result)
+    # method_2_result = serch_inattack_ru_db(email)
+    # print("method_2_result" , method_2_result)
+    # await message.answer(f"database search result:\n{method_1_result}\n\n{method_2_result}")
+    return None
 
 
-async def ghunt(email, message):
-    as_client = httpx.AsyncClient()
-    is_registered = await is_email_registered(as_client, str(email))
-    if is_registered:
-        return await message.answer("Registered on Google : True")
-    return await message.answer("Registered on Google : False")
+
+async def ghunt(email, message: Message):
+    ghunt_data , review_locations = run_ghunt(str(email))
+    if ghunt_data:
+        #print(ghunt_data)
+        await message.answer(ghunt_data)
+        
+        try:
+            screenshot_path, map_path = await get_reviews_screenshot(review_locations, message.message_id)
+            photo = FSInputFile(screenshot_path )
+            await message.answer_photo(photo=photo)
+            os.remove(screenshot_path)
+            os.remove(map_path)
+        except Exception as e:
+            print("error in getting review photo", e )
+        return None
+    await message.answer("Registered on Google : False")
+    return None 
 
 
 
@@ -113,6 +192,10 @@ async def ghunt(email, message):
         # mainres = res.replace('  ', '')
         # # return f'0t:{mainres.strip()}'
         # await message.answer(f'0t:{mainres.strip()}')
+
+async def onion_search(email, message: Message):
+    data = scrape_onion(email)
+    await message.answer(str(data))
 
 
 async def holehe(email, message):
@@ -326,11 +409,28 @@ async def command_search_handler(message: Message) -> None:
 
     #ghunt
 
-    
+    #await message.answer("getting GHUNT result")
 
     # asyncio.run(ghunt())
-    asyncio.create_task(ghunt(email, message))
+    try:
+        await ghunt(email, message)
 
+    except Exception as e:
+        print("Error in ghunt:" , e)
+    #await message.answer("getting DB SEARCHS METHOD1 result")
+
+    try:
+        await search_db(email,message)
+    except Exception as e:
+        print("Error in search_db:" , e)
+    
+    try:
+        await onion_search(email, message)
+    except Exception as e:
+        print("Error in onion search:", e)
+# await message.answer("getting DB SEARCHS METHOD1 result")
+
+    
     #avtar api
     # url = "https://avatarapi.com/v2/api.aspx"
 

@@ -10,11 +10,11 @@ import subprocess
 from aiogram import Router
 
 
-from selenium_driverless import webdriver
-from selenium_driverless.types.by import By
+# from selenium_driverless import webdriver
+# from selenium_driverless.types.by import By
 import asyncio
-from capmonstercloudclient import CapMonsterClient, ClientOptions
-from capmonstercloudclient.requests import HcaptchaProxylessRequest
+# from capmonstercloudclient import CapMonsterClient, ClientOptions
+# from capmonstercloudclient.requests import HcaptchaProxylessRequest
 from bs4 import BeautifulSoup
 import csv
 import os
