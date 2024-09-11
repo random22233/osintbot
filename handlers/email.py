@@ -25,16 +25,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CAPMONSTER_API_KEY = os.getenv('CAPMONSTER_API_KEY')
-LEAKOSINT_TOKEN = os.getenv('LEAKOSINT_TOKEN')
-WOXY_API_KEY = os.getenv('WOXY_API_KEY')
-AVATAR_API_USER = os.getenv('AVATAR_API_USER')
-AVATAR_API_PASS = os.getenv('AVATAR_API_PASS')
-WOXY_API_KEY = os.getenv('WOXY_API_KEY')
-SEON_API_KEY = os.getenv('SEON_API_KEY')
-TELETYPE_API_KEY = os.getenv('SEON_API_KEY')
-
-REVERSE_CONTACT_API_KEY = os.getenv('REVERSE_CONTACT_API_KEY')
 
 def search_email_in_file(email, filename):
     result = None
