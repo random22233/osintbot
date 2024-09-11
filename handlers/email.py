@@ -1,24 +1,27 @@
-from datetime import datetime
-import requests
-import subprocess
-import csv
-import os
 from aiogram import F
-from aiogram.types import Message , FSInputFile
-from utils.db_search import search_carderpro, search_inattack_part1 , search_inattack_part2, search_inattack_user, search_opensc_ws, search_xakepok, search_zloy_db
-from utils.ghunt_email.ghunt import ghunt as run_ghunt
+from aiogram import Router
+import requests
+from aiogram.types import Message
+import urllib.parse
 
+import time
+
+from urllib.parse import quote
+
+
+import subprocess
 from aiogram import Router
 
 
-# from selenium_driverless import webdriver
-# from selenium_driverless.types.by import By
-# from capmonstercloudclient import CapMonsterClient, ClientOptions
-# from capmonstercloudclient.requests import HcaptchaProxylessRequest
+from selenium_driverless import webdriver
+from selenium_driverless.types.by import By
+import asyncio
+from capmonstercloudclient import CapMonsterClient, ClientOptions
+from capmonstercloudclient.requests import HcaptchaProxylessRequest
+from bs4 import BeautifulSoup
+import csv
+import os
 from dotenv import load_dotenv
-
-from utils.get_reviews_screenshot import get_reviews_screenshot
-from utils.onion_serch import scrape_onion
 
 load_dotenv()
 
@@ -29,6 +32,7 @@ AVATAR_API_USER = os.getenv('AVATAR_API_USER')
 AVATAR_API_PASS = os.getenv('AVATAR_API_PASS')
 WOXY_API_KEY = os.getenv('WOXY_API_KEY')
 SEON_API_KEY = os.getenv('SEON_API_KEY')
+TELETYPE_API_KEY = os.getenv('SEON_API_KEY')
 
 REVERSE_CONTACT_API_KEY = os.getenv('REVERSE_CONTACT_API_KEY')
 
@@ -62,100 +66,120 @@ def search_in_csv(file_path, column_name, search_value):
                 break
     return result
 
-async def send_text_file(message: Message, file_content, file_path, file_name):
-    """Sends an in-memory text file to a Telegram chat."""
-    with open(file_path , "w") as f:
-        f.write(file_content)
-    document = FSInputFile(file_path, filename=file_name)
-    await message.answer_document(document=document)
-    os.remove(file_path)
+
+import sys
+import httpx
 
 
-async def search_db(email , message: Message):
-    await message.answer(f"searching in local databases")
-    try:
-        data = search_zloy_db(email)
-        await message.answer(data)
-    except Exception as e:
-        print("error in search_zloy_db", e)
-    try:
-        user_data, messages = search_inattack_part1(email)
-        await message.answer(user_data)
-        if messages and len(messages) > 0:
-            now = str(datetime.now()).replace(":", "_").replace(" ", "_").replace("-", "_").replace(".", "_")
-            current_directory = os.getcwd()
-            messages_filename = f"messages_{message.message_id}_{now}.txt"
-            messages_path = os.path.join(current_directory, messages_filename)
-            
-            await  send_text_file(message, messages, messages_path, messages_filename)
-    except Exception as e:
-        print("error in search_inattack_part1", e)
-    try:
-        user_data, messages = search_inattack_part2(email)
-        await message.answer(user_data)
-        if messages and len(messages) > 0:
-            now = str(datetime.now()).replace(":", "_").replace(" ", "_").replace("-", "_").replace(".", "_")
-            current_directory = os.getcwd()
-            messages_filename = f"posts_{message.message_id}_{now}.txt"
-            messages_path = os.path.join(current_directory, messages_filename)
-            
-            await  send_text_file(message, messages, messages_path, messages_filename)
-    except Exception as e:
-        print("error in search_inattack_part2", e)
-    try:
-        user_data, messages = search_xakepok(email)
-        await message.answer(user_data)
-        if messages and len(messages) > 0:
-            now = str(datetime.now()).replace(":", "_").replace(" ", "_").replace("-", "_").replace(".", "_")
-            current_directory = os.getcwd()
-            messages_filename = f"posts_{message.message_id}_{now}.txt"
-            messages_path = os.path.join(current_directory, messages_filename)
-            
-            await  send_text_file(message, messages, messages_path, messages_filename)
-    except Exception as e:
-        print("error in search_inattack_part2", e)
-    try:
-        data = search_carderpro(email)
-        await message.answer(data)
-    except Exception as e:
-        print("error in search_carderpro", e)
-    try:
-        data = search_opensc_ws(email)
-        await message.answer(data)
-    except Exception as e:
-        print("error in search_opensc_ws", e)
-       
-    try:
-        data = search_inattack_user(email)
-        await message.answer(data)
-    except Exception as e:
-        print("error in search_inattack_user", e) 
-    # print("method_1_result" , method_1_result)
-    # method_2_result = serch_inattack_ru_db(email)
-    # print("method_2_result" , method_2_result)
-    # await message.answer(f"database search result:\n{method_1_result}\n\n{method_2_result}")
-    return None
+async def ghunt(email, message):
+    command_output = f'ghunt email {email}'
+    result = subprocess.check_output(command_output, shell=True, text=True)
+    # print(result)
+    return await message.answer(result.replace('"', ''))
+
+async def onion(email, message):
+    command_output = f'onionsearch "{email}"'
+    result = subprocess.check_output(command_output, shell=True, text=True)
+    # print(result)
+    return await message.answer(result)
 
 
+varr = """First Name:	ANDREW
+Last Name:	BOGOD
+State:	NY
+City:	BROOKLYN
+Address:	21 HILL ST
+Zip Code:	11208-2820
 
-async def ghunt(email, message: Message):
-    ghunt_data , review_locations = run_ghunt(str(email))
-    if ghunt_data:
-        #print(ghunt_data)
-        await message.answer(ghunt_data)
-        
-        try:
-            screenshot_path, map_path = await get_reviews_screenshot(review_locations, message.message_id)
-            photo = FSInputFile(screenshot_path )
-            await message.answer_photo(photo=photo)
-            os.remove(screenshot_path)
-            os.remove(map_path)
-        except Exception as e:
-            print("error in getting review photo", e )
-        return None
-    await message.answer("Registered on Google : False")
-    return None 
 
+Name:	Andrew Bogod
+Reported Date:	05/07/2018
+Gender:	Male
+Address:	2657 E 21st Street, Brooklyn, New York
+
+
+Name:	ANDREW BOGOD
+First Name:	ANDREW
+Last Name:	BOGOD
+Address:	21 HILL ST, NY, BROOKLYN, 11
+City:	BROOKLYN
+State:	11
+Latitude:	0.000000
+Longitude:	0.000000
+Gender:	
+Registration Date:	2019-09-11
+Own Rent:	own
+Source:	classmates.com
+Domain:	gmail
+Ip Address:	66.251.66.163
+
+Name:	ANDREW BOGOD
+First Name:	ANDREW
+Last Name:	BOGOD
+Address:	21 HILL ST, BROOKLYN, NY 11208
+City:	BROOKLYN
+State:	NY
+Zip:	11208
+Gender:	
+Domain:	best-giveaways.com
+Ip Address:	66.251.66.163
+
+
+Full Name:	Andrew Bogod
+First Name:	Andrew
+Last Name:	Bogod
+Address:	Brooklyn, NY, United States
+Country Code:	US
+
+Address:	2657 E 21st Street, Brooklyn, New York
+Country:	US
+City:	Brooklyn
+State:	NY
+Valid Since:	12/01/2020
+
+
+Address:	21 Hill Street, Brooklyn, New York
+Country:	US
+City:	Brooklyn
+State:	NY
+Valid Since:	05/07/2018
+
+
+Phone Number:	7183682117
+Country Code:	1
+Number:	7183682117
+International Display:	+1 718-368-2117
+Valid Since:	10/07/2021"""
+
+varrr = """First Name:	SUZANNE
+Last Name:	JACOB
+State:	NY
+City:	BROOKLYN
+Address:	2657 E 21ST ST APT 2
+Zip Code:	11235-2983
+
+Name:	Suzanne Jacob
+Reported Date:	03/21/2017
+Gender:	Female
+
+Name:	SUZANNE JACOB
+First Name:	SUZANNE
+Last Name:	JACOB
+Latitude:	0.000000
+Longitude:	0.000000
+Gender:	
+Registration Date:	2019-08-12
+Own Rent:	own
+Source:	work-from-home-directory.com
+Domain:	gmail
+Ip Address:	208.254.9.86
+
+Full Name:	Suzanne Jacob
+First Name:	Suzanne
+Last Name:	Jacob
+University Name N1:	Brooklyn College
+University Degree N1:	Psychology
+"""
 
 
 # async def search0t(email, message):
@@ -193,10 +217,6 @@ async def ghunt(email, message: Message):
         # # return f'0t:{mainres.strip()}'
         # await message.answer(f'0t:{mainres.strip()}')
 
-async def onion_search(email, message: Message):
-    data = scrape_onion(email)
-    await message.answer(str(data))
-
 
 async def holehe(email, message):
     command_output = f'holehe {email} --only-used --no-color'
@@ -218,6 +238,24 @@ email_router = Router()
 @email_router.message(F.text.regexp(r'^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$'))
 async def command_search_handler(message: Message) -> None:
     email = message.text
+
+    import base64
+
+
+    head = {'samu': '14d764ce3bf9708c2fb16b5e25289fbf963af290a%3A5%3A%7Bi%3A0%3BO%3A7%3A%22MongoId%22%3A1%3A%7Bs%3A8%3A%22objectID%22%3Bs%3A24%3A%2266e03e12c10085fefe0f4873%22%3B%7Di%3A1%3Bs%3A9%3A%22leo%20bogod%22%3Bi%3A2%3Bi%3A2592000%3Bi%3A3%3Ba%3A2%3A%7Bs%3A9%3A%22loginType%22%3Bs%3A8%3A%22customer%22%3Bs%3A9%3A%22ipAddress%22%3Bs%3A11%3A%2249.207.49.2%22%3B%7Di%3A4%3BO%3A7%3A%22MongoId%22%3A1%3A%7Bs%3A8%3A%22objectID%22%3Bs%3A24%3A%2266e1ae9f7fba74db99022f2c%22%3B%7D%7D'}
+
+    
+    r = requests.get(f'https://members.infotracer.com/customer/renderReport?id={base64.b32encode(bytearray("abc", 'ascii')).decode('utf-8')}', headers=head)
+    if r:
+        await message.answer(r.content)
+    else:
+        await message.answer("No result found or invalid response!")
+
+
+    
+
+
+
     #search0t
     # asyncio.create_task(search0t(email, message))
     #holehe
@@ -354,6 +392,36 @@ async def command_search_handler(message: Message) -> None:
     # if matching_rows:
     #     await message.answer(f'Discord Result 5:\n\nUsername: {matching_rows}')
 
+
+    # csv_file_path = 'data/csv/zloy.org.csv'
+    # search_column = 'email'
+
+    # matching_rows = search_in_csv(csv_file_path, search_column, email)
+    # if matching_rows:
+    #     await message.answer(f'Result 6:\n\n {matching_rows}')
+
+    # csv_file_path = 'data/csv/opensc.ws.csv'
+    # search_column = 'email'
+
+    # matching_rows = search_in_csv(csv_file_path, search_column, email)
+    # if matching_rows:
+    #     await message.answer(f'Result 7:\n\n {matching_rows}')
+
+    
+    # csv_file_path = 'data/csv/inattack.ru_user.csv'
+    # search_column = 'email'
+
+    # matching_rows = search_in_csv(csv_file_path, search_column, email)
+    # if matching_rows:
+    #     await message.answer(f'Result 8:\n\n {matching_rows}')
+    
+    # csv_file_path = 'data/csv/carderpro.csv'
+    # search_column = 'email'
+
+    # matching_rows = search_in_csv(csv_file_path, search_column, email)
+    # if matching_rows:
+    #     await message.answer(f'Result 9:\n\n {matching_rows}')
+
     # sql_file_path = 'data/sql/opensc.ws.sql'
 
     # matching_lines = search_in_sql_file(sql_file_path, email)
@@ -381,56 +449,63 @@ async def command_search_handler(message: Message) -> None:
     #     for line in matching_lines:
     #         await message.answer(line)
 
+    # sql_file_path = 'data/sql/inattack.ru_user.sql'
+
+    # matching_lines = search_in_sql_file(sql_file_path, email)
+    # if matching_lines:
+    #     message.answer(f"SQL DB 4'{email}':")
+
+    #     for line in matching_lines:
+    #         await message.answer(line)
+    
+    # sql_file_path = 'data/sql/zloy.org.sql'
+
+    # matching_lines = search_in_sql_file(sql_file_path, email)
+    # if matching_lines:
+    #     message.answer(f"SQL DB 5'{email}':")
+
+    #     for line in matching_lines:
+    #         await message.answer(line)
+
     #seon
     
-    headers = {
-        "X-API-KEY": SEON_API_KEY
-    }
+    # headers = {
+    #     "X-API-KEY": SEON_API_KEY
+    # }
 
-    r = requests.get(f"https://api.us-east-1-main.seon.io/SeonRestService/email-api/v2/{email}", headers=headers)
-    seon = r.text
-
-    # await message.answer()
-    if len(seon) > 4096:
-        for x in range(0, len(seon), 4096):
-            await message.answer(seon[x:x+4096])
-    else:
-        await message.answer(seon)
+    # r = requests.get(f"https://api.us-east-1-main.seon.io/SeonRestService/email-api/v2/{email}", headers=headers)
+    # seon = r.text
+    # if len(seon) > 4096:
+    #     for x in range(0, len(seon), 4096):
+    #         await message.answer(seon[x:x+4096])
+    # else:
+    #     await message.answer(seon)
 
     #woxy
-    r = requests.get(f'https://api.whoxy.com/?key=6f74300ecd4db96ct5a7d9148ca47c13f&reverse=whois&email={email}').text
-    woxy = r
+    # r = requests.get(f'https://api.whoxy.com/?key=6f74300ecd4db96ct5a7d9148ca47c13f&reverse=whois&email={email}').text
+    # woxy = r
 
-    if len(woxy) > 4096:
-        for x in range(0, len(woxy), 4096):
-            await message.answer(woxy[x:x+4096])
-    else:
-        await message.answer(woxy)
+    # if len(woxy) > 4096:
+    #     for x in range(0, len(woxy), 4096):
+    #         await message.answer(woxy[x:x+4096])
+    # else:
+    #     await message.answer(woxy)
+
+    #teletype
+    # headers = {
+    #     "Authorization": TELETYPE_API_KEY
+    # }
+
+    # r = requests.get(f"api.usersbox.ru/v1/search?q={email}", headers=headers).json()
+    
 
     #ghunt
 
-    #await message.answer("getting GHUNT result")
+    
 
     # asyncio.run(ghunt())
-    try:
-        await ghunt(email, message)
+    # asyncio.create_task(ghunt(email, message))
 
-    except Exception as e:
-        print("Error in ghunt:" , e)
-    #await message.answer("getting DB SEARCHS METHOD1 result")
-
-    try:
-        await search_db(email,message)
-    except Exception as e:
-        print("Error in search_db:" , e)
-    
-    try:
-        await onion_search(email, message)
-    except Exception as e:
-        print("Error in onion search:", e)
-# await message.answer("getting DB SEARCHS METHOD1 result")
-
-    
     #avtar api
     # url = "https://avatarapi.com/v2/api.aspx"
 
