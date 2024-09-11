@@ -84,104 +84,6 @@ async def onion(email, message):
     return await message.answer(result)
 
 
-varr = """First Name:	ANDREW
-Last Name:	BOGOD
-State:	NY
-City:	BROOKLYN
-Address:	21 HILL ST
-Zip Code:	11208-2820
-
-
-Name:	Andrew Bogod
-Reported Date:	05/07/2018
-Gender:	Male
-Address:	2657 E 21st Street, Brooklyn, New York
-
-
-Name:	ANDREW BOGOD
-First Name:	ANDREW
-Last Name:	BOGOD
-Address:	21 HILL ST, NY, BROOKLYN, 11
-City:	BROOKLYN
-State:	11
-Latitude:	0.000000
-Longitude:	0.000000
-Gender:	
-Registration Date:	2019-09-11
-Own Rent:	own
-Source:	classmates.com
-Domain:	gmail
-Ip Address:	66.251.66.163
-
-Name:	ANDREW BOGOD
-First Name:	ANDREW
-Last Name:	BOGOD
-Address:	21 HILL ST, BROOKLYN, NY 11208
-City:	BROOKLYN
-State:	NY
-Zip:	11208
-Gender:	
-Domain:	best-giveaways.com
-Ip Address:	66.251.66.163
-
-
-Full Name:	Andrew Bogod
-First Name:	Andrew
-Last Name:	Bogod
-Address:	Brooklyn, NY, United States
-Country Code:	US
-
-Address:	2657 E 21st Street, Brooklyn, New York
-Country:	US
-City:	Brooklyn
-State:	NY
-Valid Since:	12/01/2020
-
-
-Address:	21 Hill Street, Brooklyn, New York
-Country:	US
-City:	Brooklyn
-State:	NY
-Valid Since:	05/07/2018
-
-
-Phone Number:	7183682117
-Country Code:	1
-Number:	7183682117
-International Display:	+1 718-368-2117
-Valid Since:	10/07/2021"""
-
-varrr = """First Name:	SUZANNE
-Last Name:	JACOB
-State:	NY
-City:	BROOKLYN
-Address:	2657 E 21ST ST APT 2
-Zip Code:	11235-2983
-
-Name:	Suzanne Jacob
-Reported Date:	03/21/2017
-Gender:	Female
-
-Name:	SUZANNE JACOB
-First Name:	SUZANNE
-Last Name:	JACOB
-Latitude:	0.000000
-Longitude:	0.000000
-Gender:	
-Registration Date:	2019-08-12
-Own Rent:	own
-Source:	work-from-home-directory.com
-Domain:	gmail
-Ip Address:	208.254.9.86
-
-Full Name:	Suzanne Jacob
-First Name:	Suzanne
-Last Name:	Jacob
-University Name N1:	Brooklyn College
-University Degree N1:	Psychology
-"""
-
-
 # async def search0t(email, message):
 #     client_options = ClientOptions(api_key=CAPMONSTER_API_KEY)
 #     cap_monster_client = CapMonsterClient(options=client_options)
@@ -244,7 +146,7 @@ async def command_search_handler(message: Message) -> None:
 
     head = {'samu': '14d764ce3bf9708c2fb16b5e25289fbf963af290a%3A5%3A%7Bi%3A0%3BO%3A7%3A%22MongoId%22%3A1%3A%7Bs%3A8%3A%22objectID%22%3Bs%3A24%3A%2266e03e12c10085fefe0f4873%22%3B%7Di%3A1%3Bs%3A9%3A%22leo%20bogod%22%3Bi%3A2%3Bi%3A2592000%3Bi%3A3%3Ba%3A2%3A%7Bs%3A9%3A%22loginType%22%3Bs%3A8%3A%22customer%22%3Bs%3A9%3A%22ipAddress%22%3Bs%3A11%3A%2249.207.49.2%22%3B%7Di%3A4%3BO%3A7%3A%22MongoId%22%3A1%3A%7Bs%3A8%3A%22objectID%22%3Bs%3A24%3A%2266e1ae9f7fba74db99022f2c%22%3B%7D%7D'}
 
-    
+
     r = requests.get(f'https://members.infotracer.com/customer/renderReport?id={base64.b32encode(bytearray("abc", 'ascii')).decode('utf-8')}', headers=head)
     if r:
         await message.answer(r.content)
