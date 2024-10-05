@@ -6,6 +6,7 @@ from aiogram.client.default import DefaultBotProperties
 from handlers.start import start_router
 from handlers.photo import photo_router
 from handlers.email import email_router
+from handlers.phone import phone_router
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
@@ -28,6 +29,7 @@ async def main() -> None:
         start_router,
 #        photo_router,
         email_router,
+        phone_router
     )
 
     # asyncio.create_task(periodic())

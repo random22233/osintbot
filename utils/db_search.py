@@ -17,6 +17,9 @@ opensc_ws = "data/df_opensc_ws.parquet"
 xakepok_members = "data/df_xakepok_xakepok_user.parquet"
 xakepok_posts= "data/df_xakepok_xakepok_post.parquet"
 
+discord_part1 = "data/df_discord_fixed_part1.parquet"
+discord_part2 = "data/df_discord_fixed_part2.parquet"
+
 def search_xakepok(target_email):
     print("--search_xakepok")
     members_df = pl.read_parquet(xakepok_members)
@@ -129,7 +132,26 @@ def search_inattack_part2(target_email):
     else:
         print("Nothing Founded in in_attack part2 db")
         return "Nothing Founded in in_attack part2 db", ""
-    
+
+def search_discord_part1(target_email):
+    print("--search_discord_part1")
+    discord_df = pl.read_parquet(discord_part1)
+    discord_filtered_df = discord_df.filter(pl.col('email') == target_email)
+    if discord_filtered_df.shape[0] > 0:
+        return discord_filtered_df[0].row(0 , named=True)
+    else:
+        return "Nothing Founded in discord part1 db" 
+ 
+def search_discord_part2(target_email):
+    print("--search_discord_part2")
+    discord_df = pl.read_parquet(discord_part2)
+    discord_filtered_df = discord_df.filter(pl.col('email') == target_email)
+    print(discord_filtered_df.head())
+    if discord_filtered_df.shape[0] > 0:
+        return discord_filtered_df[0].row(0 , named=True)
+    else:
+        return "Nothing Founded in discord part2 db" 
+        
 def search_inattack_part1(target_email):
     print("--search_inattack_part1")
     members_df = pl.read_parquet(inattack_part1_members)

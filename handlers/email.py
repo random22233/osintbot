@@ -5,7 +5,8 @@ import csv
 import os
 from aiogram import F
 from aiogram.types import Message , FSInputFile
-from utils.db_search import search_carderpro, search_inattack_part1 , search_inattack_part2, search_inattack_user, search_opensc_ws, search_xakepok, search_zloy_db
+from utils.db_search import search_carderpro, search_discord_part1, search_discord_part2, search_inattack_part1 , search_inattack_part2, search_inattack_user, search_opensc_ws, search_xakepok, search_zloy_db
+from utils.email.endato_api import get_endato_email_data
 from utils.ghunt_email.ghunt import ghunt as run_ghunt
 
 from aiogram import Router
@@ -130,6 +131,17 @@ async def search_db(email , message: Message):
         await message.answer(data)
     except Exception as e:
         print("error in search_inattack_user", e) 
+    try:
+        data = search_discord_part1(email)
+        await message.answer(str(data))
+    except Exception as e:
+        print("error in search_discord_part1", e) 
+    try:
+        data = search_discord_part2(email)
+        await message.answer(str(data))
+    except Exception as e:
+        print("error in search_discord_part2", e) 
+            
     # print("method_1_result" , method_1_result)
     # method_2_result = serch_inattack_ru_db(email)
     # print("method_2_result" , method_2_result)
@@ -192,6 +204,11 @@ async def ghunt(email, message: Message):
         # mainres = res.replace('  ', '')
         # # return f'0t:{mainres.strip()}'
         # await message.answer(f'0t:{mainres.strip()}')
+
+async def endato_email(email, message: Message):
+    await message.answer("getting endato email data:")
+    data = get_endato_email_data(email)
+    await message.answer(str(data))
 
 async def onion_search(email, message: Message):
     data = scrape_onion(email)
@@ -381,6 +398,9 @@ async def command_search_handler(message: Message) -> None:
     #     for line in matching_lines:
     #         await message.answer(line)
 
+    print("\n\n*** searching for email:" , email , "\n\n")
+
+
     #seon
     
     headers = {
@@ -428,6 +448,12 @@ async def command_search_handler(message: Message) -> None:
         await onion_search(email, message)
     except Exception as e:
         print("Error in onion search:", e)
+
+    try:
+        await endato_email(email, message)
+    except Exception as e:
+        print("Error in endato_email:", e)
+    
 # await message.answer("getting DB SEARCHS METHOD1 result")
 
     

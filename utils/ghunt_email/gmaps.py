@@ -327,12 +327,17 @@ def output(err: str, stats: Dict[str, int], reviews: List[MapsReview], photos: L
         4: "Very expensive"
     }
 
+    print("debug 1")
     total_costs = 0
     costs_stats = {x:0 for x in range(1,5)}
     for review in reviews_and_photos:
         if review.location.cost_level:
-            costs_stats[review.location.cost_level] += 1
+            print("review.location.cost_level" , review.location.cost_level)
+            cost_level = max(1,min(review.location.cost_level , 4))
+            costs_stats[cost_level] += 1
             total_costs += 1
+    print("debug 2")
+    
     costs_stats = dict(sorted(costs_stats.items(), key=lambda item: item[1], reverse=True)) # We sort the dict by cost popularity
 
     if total_costs:

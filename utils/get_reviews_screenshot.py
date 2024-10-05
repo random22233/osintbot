@@ -33,6 +33,7 @@ async def create_map_with_custom_markers(coordinates, zoom, id):
     screenshot_filename = f"google_maps_map_element_{id}_{now}.png"
     screenshot_path = os.path.join(current_directory, screenshot_filename)
     await driver.save_screenshot(screenshot_path)
+    await driver.quit()
     return screenshot_path, map_path
 
 def calculate_middle(coordinates):
