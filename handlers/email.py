@@ -213,7 +213,31 @@ async def endato_email(email, message: Message):
 async def onion_search(email, message: Message):
     data = scrape_onion(email)
     await message.answer(str(data))
+    
+async def github_search(email):
+    url = "https://api.github.com/search/users"
+    token = ""
 
+# Set up headers with authorization
+    headers = {
+    "Authorization": f"token {token}",
+    "Accept": "application/vnd.github.v3+json"
+    }
+
+# Define parameters
+params = {
+    "q":email
+}
+
+# Make the request
+response = requests.get(url, headers=headers, params=params)
+
+# Check if the request was successful
+if response.status_code == 200:
+    data = response.json()
+    print(data)
+else:
+    print(f"Request failed with status code {response.status_code}: {response.text}")
 
 async def holehe(email, message):
     command_output = f'holehe {email} --only-used --no-color'
