@@ -1,0 +1,287 @@
+@import url("./xy-theme.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* --brown-color: rgb(226, 135, 67); */
+  --brown-color: #5d9e92;
+  --purple-color: #6564db;
+  --paste-color: #89d2dc;
+  --blue-color: #232ed1;
+  --orange-color: #f4bb44;
+  --red-color: #6f8faf;
+  --brown2-color: #a0522d;
+}
+
+html,
+body {
+  margin: 0;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+}
+
+.dndflow {
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.dndflow aside {
+  border-right: 1px solid #eee;
+  padding: 15px 10px;
+  font-size: 12px;
+  background: #fcfcfc;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar_open {
+  position: relative;
+  /* transform: translateX(0px); */
+  display: block;
+  transition: 0.3s all linear;
+}
+
+.sidebar_close {
+  position: fixed;
+  /* transform: translateX(-300px); */
+  display: none;
+  transition: 0.3s all linear;
+}
+
+.dndflow aside .description {
+  margin-bottom: 10px;
+}
+
+.dndflow .dndnode {
+  width: 22%;
+}
+
+.dndflow .dndnode .personal_node {
+  height: 74px;
+  padding: 20px;
+  border: 3px solid var(--brown-color);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  background-color: white;
+  width: 100%;
+  color: var(--brown-color);
+
+  &.social_node {
+    border: 3px solid var(--purple-color);
+    color: var(--purple-color);
+  }
+
+  &.crypto_node {
+    border: 3px solid var(--paste-color);
+    color: var(--paste-color);
+  }
+
+  &.financial_node {
+    border: 3px solid var(--blue-color);
+    color: var(--blue-color);
+  }
+
+  &.darkweb_node {
+    border: 3px solid var(--brown2-color);
+    color: var(--brown2-color);
+  }
+
+  &.password_node {
+    border: 3px solid var(--orange-color);
+    color: var(--orange-color);
+  }
+
+  &.web_node {
+    border: 3px solid var(--red-color);
+    color: var(--red-color);
+  }
+}
+
+.dndflow .dndnode.input {
+  border-color: var(--brown-color);
+}
+
+.dndflow .dndnode.output {
+  border-color: #ff0072;
+}
+
+.react-flow__node {
+  background: var(--brown-color) !important;
+  border-radius: 0px 0px 6px 0px !important;
+  border: 2px solid #32d0b3 !important;
+  transition: 0.3s all linear;
+  overflow: hidden !important;
+  padding: 0px 2px !important;
+  /* height: 40px !important; */
+
+  &:hover {
+    box-shadow: 0px 0px 15px 0px #32d0b3 !important;
+    transition: 0.3s all linear;
+  }
+}
+
+.node_icon {
+  padding: 4px;
+  background: white;
+  height: 35px;
+  width: 43px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--brown-color);
+}
+
+.node_input {
+  font-size: 6px !important;
+  outline: none;
+  border: none;
+  width: 70px;
+  padding: 3px 5px;
+  color: white;
+  background-color: #1b1f20 !important;
+}
+
+.save_btn {
+  background-color: #32d0b3;
+  color: white;
+  font-size: 6px !important;
+  padding: 3px 5px !important;
+  /* margin-left: -5px; */
+  border-radius: 2px;
+}
+
+.dndflow .reactflow-wrapper {
+  flex-grow: 1;
+  height: 100vh;
+}
+
+.dndflow .selectall {
+  margin-top: 10px;
+}
+
+.dndflow aside {
+  background-color: #1b1f20;
+}
+
+.react-flow__node-input {
+  background-color: var(--brown-color) !important;
+  border-radius: 0px 0px 6px 0px !important;
+  border: 2px solid #32d0b3 !important;
+  transition: 0.3s all linear;
+
+  &:hover {
+    box-shadow: 0px 0px 15px 0px #32d0b3 !important;
+    transition: 0.3s all linear;
+  }
+}
+
+.arrow_left {
+  position: fixed;
+  top: 50%;
+  z-index: 999;
+  padding: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 25px;
+  background-color: rgb(41, 41, 41);
+  border-radius: 4px;
+}
+
+.arrow_right {
+  position: fixed;
+  top: 50%;
+  right: 0%;
+  z-index: 999;
+  padding: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 25px;
+  background-color: rgb(41, 41, 41);
+  border-radius: 4px;
+}
+
+.arrow_right_open {
+  position: fixed;
+  top: 50%;
+  right: 330px;
+  z-index: 999;
+  padding: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 25px;
+  background-color: rgb(41, 41, 41);
+  border-radius: 4px;
+}
+
+.react-flow__edge-path {
+  stroke: lightgray !important;
+}
+
+.react-flow__handle {
+  background-color: transparent !important;
+  border: none !important;
+  width: 110px !important;
+  height: 16px !important;
+  left: 100px !important;
+  border-radius: 0px !important;
+}
+
+.create_new_graph_btn {
+  background: linear-gradient(45deg, #2e8069 0%, #0b58a2 100%);
+}
+
+.or_text {
+  position: relative;
+
+  &::before {
+    content: "";
+    top: 55%;
+    left: 0;
+    width: 47%;
+    height: 1px;
+    background: #5d6b68;
+    position: absolute;
+    z-index: 1;
+  }
+
+  &::after {
+    content: "";
+    top: 55%;
+    right: 0;
+    width: 47%;
+    height: 1px;
+    background: #5d6b68;
+    position: absolute;
+    z-index: 1;
+  }
+}
+
+.graph_filter_input {
+  ::placeholder {
+    color: gray !important;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .dndflow {
+    flex-direction: row;
+  }
+
+  .dndflow aside {
+    width: 40%;
+    max-width: 350px;
+  }
+}
