@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { FaCirclePlus } from "react-icons/fa6";
 import { IoMdCloseCircle } from "react-icons/io";
@@ -67,7 +68,7 @@ const RightSidebar = ({ isRightSidebar, info, setInfo }) => {
                 left: 0,
               }}
             />
-            <img
+            <Image
               src={
                 image
                   ? image

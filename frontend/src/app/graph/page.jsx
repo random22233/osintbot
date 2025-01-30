@@ -226,7 +226,7 @@ const DnDFlow = () => {
       setNodes((nds) => nds.concat(newNode));
       setIsSave(false);
     },
-    [screenToFlowPosition, type, nodeId]
+    [screenToFlowPosition, type, nodeId, inputValue, isSave, setNodes]
   );
 
   const save = (id, val) => {
@@ -321,7 +321,7 @@ const DnDFlow = () => {
     //     // });
     //   }
     // });
-  }, [nodeId]);
+  }, [nodeId, inputValue, nodes, setNodes, type]);
 
   // useEffect(() => {
   //   setNodes((nds) =>

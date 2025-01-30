@@ -130,7 +130,7 @@ const Sidebar = ({ setGraphData }) => {
           onDragStart={(event) => onDragStart(event, "phone")}
           draggable
         >
-          <FaPhoneAlt className="personal_node" />
+          {/* <FaPhoneAlt className="personal_node" /> */}
           <p className="text-gray-200 text-[13px]">Phone</p>
         </div>
         <div
@@ -138,7 +138,7 @@ const Sidebar = ({ setGraphData }) => {
           onDragStart={(event) => onDragStart(event, "email")}
           draggable
         >
-          <MdOutlineMarkEmailUnread className="personal_node" />
+          {/* <MdOutlineMarkEmailUnread className="personal_node" /> */}
           <p className="text-gray-200 text-[13px]">Email</p>
         </div>
         <div
@@ -146,7 +146,7 @@ const Sidebar = ({ setGraphData }) => {
           onDragStart={(event) => onDragStart(event, "username")}
           draggable
         >
-          <MdOutlineAlternateEmail className="personal_node" />
+          {/* <MdOutlineAlternateEmail className="personal_node" /> */}
           <p className="text-gray-200 text-[13px]">Username</p>
         </div>
       </div>
